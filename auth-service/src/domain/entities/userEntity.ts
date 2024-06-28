@@ -12,5 +12,6 @@ export  interface UserEntity{
     email:string;
     password:string;
     role:Role;
-    isBlocked:boolean
+    isBlocked:boolean;
+    isAdmin:boolean
 }
