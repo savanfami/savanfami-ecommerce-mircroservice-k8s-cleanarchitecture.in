@@ -1,0 +1,62 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and push Docker images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      - name: Build and push admin image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./admin-service
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/admin-service:latest
+      
+      - name: Build and push cart-service image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./cart-serivce
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/cart-serivce:latest
+        
+      - name: Build and push product image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./product-serivce
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/product-serivce:latest
+      
+      - name: Build and push user image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./auth-serivce
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/auth-serivce:latest
+
+      - name: Build and push user image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./apigateway
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/apigateway:latest
